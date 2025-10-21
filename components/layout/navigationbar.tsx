@@ -11,17 +11,14 @@ export default function NavigationBar() {
 
   const links = [
     { name: "Home", href: "/" },
-    { name: "Dashboard", href: "/dashboard" },
+    { name: "News", href: "/news" },
     { name: "Entertainment", href: "/entertainment" },
     { name: "Sports", href: "/sports" },
     { name: "Tech", href: "/tech" },
     { name: "Finance", href: "/finance" },
-    { name: "Local", href: "/local" },
     { name: "Science", href: "/science" },
     { name: "Health", href: "/health" },
     { name: "World", href: "/world" },
-    { name: "Weather", href: "/weather" },
-    { name: "Movies", href: "/movies" },
   ];
 
   return (
@@ -49,12 +46,17 @@ export default function NavigationBar() {
 
         {/* Right: Register + Sign In */}
         <div className="flex items-center gap-4">
-          <button className="bg-black text-white px-4 py-1 font-semibold rounded">
-            Register
-          </button>
-          <button className="text-black font-medium hover:underline">
-            Sign In
-          </button>
+          <Link href="/register">
+            <button className="bg-gray-500 text-white px-4 py-1 font-semibold rounded">
+              Register
+            </button>
+          </Link>
+          
+          <Link href="/login">
+            <button className="text-black font-medium hover:underline">
+              Sign In
+            </button>
+          </Link>
         </div>
       </div>
 

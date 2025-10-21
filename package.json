@@ -9,16 +9,26 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@react-email/render": "^1.4.0",
+    "bcryptjs": "^3.0.2",
+    "cookie": "^1.0.2",
+    "jsonwebtoken": "^9.0.2",
     "keen-slider": "^6.8.6",
     "lucide-react": "^0.542.0",
+    "mongodb": "^6.20.0",
     "next": "15.5.2",
+    "nodemailer": "^7.0.6",
+    "pg": "^8.16.3",
     "react": "19.1.0",
-    "react-dom": "19.1.0"
+    "react-dom": "19.1.0",
+    "resend": "^6.2.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
+    "@types/nodemailer": "^7.0.2",
+    "@types/pg": "^8.15.5",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",

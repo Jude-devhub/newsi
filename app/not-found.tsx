@@ -3,7 +3,7 @@ import { fetchNews } from "@/lib/fetchNews";
 import AlertBox from "@/components/layout/alert";
 
 export default async function NotFound() {
-  const articles = await fetchNews("bbc news");
+  const articles = await fetchNews("General");
   return (
     <>
       <AlertBox message="Page was not found. Check the URL or go back to the homepage." />

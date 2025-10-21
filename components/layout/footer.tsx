@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function Footer() {
   return (
-    <footer className="bg-gray-900 text-gray-300 mt-12">
+    <footer className="bg-gray-500 text-gray-300 mt-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Column 1 - Logo / About */}
@@ -39,7 +39,7 @@ export default function Footer() {
           <div>
             <h3 className="text-lg font-semibold text-white mb-4">Contact</h3>
             <p className="text-sm">📍 Lagos, Nigeria</p>
-            <p className="text-sm">✉ judeokechukwuogbonna.com</p>
+            <p className="text-sm">✉ judeokechukwuogbonna@gmail.com</p>
             <p className="text-sm">☎ +234 706 294 3561</p>
           </div>
         </div>

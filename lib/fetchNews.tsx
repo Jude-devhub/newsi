@@ -27,7 +27,7 @@ export async function fetchNews(query: string, daysAgo: number = 3): Promise<Art
 
     const res = await fetch(
       `https://newsapi.org/v2/everything?q=${query}&from=${formattedDate}&sortBy=publishedAt&language=${lang}&apiKey=${process.env.SECRET_API_KEY}`,
-      { next: { revalidate: 1200 } }
+      { next: { revalidate: 7200 } } // revalidate every 2 hours
     );
 
     if (!res.ok) {
