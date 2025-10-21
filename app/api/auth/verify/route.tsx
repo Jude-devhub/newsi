@@ -14,7 +14,7 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: "Invalid or expired token" }, { status: 400 });
     }
 
-    await pool.query("UPDATE users SET is_verified = true, verification_token = NULL WHERE verification_token = $1", [token]);
+    await pool.query("UPDATE users SET verified = true, verification_token = NULL WHERE verification_token = $1", [token]);
 
     return NextResponse.redirect(`${process.env.NEXT_PUBLIC_BASE_URL}/login?verified=true`);
   } catch (error) {

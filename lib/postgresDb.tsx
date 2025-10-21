@@ -3,7 +3,9 @@ import { Pool } from "pg";
 const connectionString = process.env.POSTGRES_URI as string;
 
 if (!connectionString) {
-  throw new Error("❌ Please add your PostgreSQL connection string to .env.local");
+  throw new Error(
+    "❌ Please add your PostgreSQL connection string to .env.local"
+  );
 }
 
 // ✅ Create PostgreSQL pool
@@ -23,7 +25,9 @@ async function initializeTables() {
         id SERIAL PRIMARY KEY,
         name TEXT NOT NULL,
         email TEXT UNIQUE NOT NULL,
-        password_hash TEXT NOT NULL,
+        password TEXT NOT NULL,
+        verified BOOLEAN DEFAULT FALSE,
+        verification_token TEXT NOT NULL,        
         created_at TIMESTAMP DEFAULT NOW()
       );
     `);
