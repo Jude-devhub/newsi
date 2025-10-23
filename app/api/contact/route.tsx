@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { Resend } from "resend";
 import pool from "@/lib/postgresDb"; // ✅ Import pool directly
+import { sendContactEmail } from "@/lib/sendEmail";
 
 export async function POST(req: Request) {
   try {
@@ -30,15 +30,15 @@ export async function POST(req: Request) {
       [name, email, message]
     );
 
-    // ✅ Send confirmation email using Resend
-    const resend = new Resend(process.env.RESEND_API_KEY);
+    // ✅ Send confirmation email
 
-    await resend.emails.send({
-      from: "onboarding@resend.dev", // ✅ Must be a verified sender
-      to: "judeokechukwuogbonna@gmail.com",
-      subject: `📩 New Contact Form Submission from ${name}`,
-      text: `Name: ${name}\nEmail: ${email}\nMessage: ${message}`,
-    });
+    const result = await sendContactEmail(name, email, message);
+
+    if (!result.success) {
+      throw new Error(result.error || "Failed to send email");
+    }
+
+
 
     return NextResponse.json({
       success: true,

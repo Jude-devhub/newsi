@@ -4,14 +4,18 @@ import Link from "next/link";
 import { useState } from "react";
 import { usePathname } from "next/navigation";
 import { Menu, Search } from "lucide-react";
+import AuthButtons from "../ui/authButtons";
+import SearchBox from "../ui/searchBox";
 
 export default function NavigationBar() {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
 
   const links = [
-    { name: "Home", href: "/" },
+    { name: "Dashboard", href: "/dashboard" },
     { name: "News", href: "/news" },
+    { name: "Weather", href: "/weather" },
+    { name: "Live Match", href: "/livegame" },
     { name: "Entertainment", href: "/entertainment" },
     { name: "Sports", href: "/sports" },
     { name: "Tech", href: "/tech" },
@@ -34,30 +38,22 @@ export default function NavigationBar() {
           >
             <Menu className="w-6 h-6" />
           </button>
-          <Search className="w-6 h-6 cursor-pointer" />
+          <SearchBox />
         </div>
 
         {/* Logo */}
         <div className="flex items-center font-extrabold text-xl text-black">
+          <Link href="/" className="flex items-center">
           <span>Newsi</span>
           <span className="text-red-600">.</span>
           <span>com</span>
+          </Link>
         </div>
 
         {/* Right: Register + Sign In */}
-        <div className="flex items-center gap-4">
-          <Link href="/register">
-            <button className="bg-gray-500 text-white px-4 py-1 font-semibold rounded">
-              Register
-            </button>
-          </Link>
-          
-          <Link href="/login">
-            <button className="text-black font-medium hover:underline">
-              Sign In
-            </button>
-          </Link>
-        </div>
+        
+          <AuthButtons />
+        
       </div>
 
       {/* Desktop Navigation (appears on md and above) */}

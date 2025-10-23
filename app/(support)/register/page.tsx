@@ -10,14 +10,24 @@ export default function RegisterPage() {
     e.preventDefault();
     setMessage("Registering...");
 
-    const res = await fetch("/api/auth/register", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
-    });
+    try {
+      const res = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
 
-    const data = await res.json();
-    setMessage(data.message);
+      const data = await res.json();
+      setMessage(data.message);
+
+      // ✅ Clear form only if registration succeeded
+      if (res.ok) {
+        setForm({ name: "", email: "", password: "" });
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      setMessage("An error occurred. Please try again.");
+    }
   };
 
   return (

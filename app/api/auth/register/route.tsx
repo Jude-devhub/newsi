@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import crypto from "crypto";
 import pool from "@/lib/postgresDb";
- import { Resend } from "resend";
+import { sendVerificationEmail } from "@/lib/sendEmail";
 
 export async function POST(req: Request) {
   try {
@@ -18,7 +18,7 @@ export async function POST(req: Request) {
     const user = result.rows[0];
 
     if (user) {
-      return NextResponse.json({ success: true, message: "email already exists" });
+      return NextResponse.json({message: `Email already exists! Login instead.` }, { status: 400 });
     }
 
     await pool.query(
@@ -28,19 +28,10 @@ export async function POST(req: Request) {
 
     // Send verification email via Resend
     const verifyUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/verify?token=${verificationToken}`;
-   
-   //send verification email
-const resend = new Resend(process.env.RESEND_API_KEY);
 
-await resend.emails.send({
-  from: "onboarding@resend.dev",
-  to: `ojudeee@gmail.com`,
-  subject: "Verify your account",
-  html: `<p>Click <a href="${verifyUrl}">here</a> to verify your account.</p>`,
-});
-console.log("Verification email sent to:", email);
 
-// sent verification email
+
+    await sendVerificationEmail(email, name, verifyUrl);
 
     return NextResponse.json({ success: true, message: "Registration successful. Check your email for verification." });
   } catch (error) {

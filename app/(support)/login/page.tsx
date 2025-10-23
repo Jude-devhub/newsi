@@ -1,10 +1,15 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function LoginPage() {
   const [form, setForm] = useState({ email: "", password: "" });
   const [message, setMessage] = useState("");
+
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectTo = searchParams.get("redirect") || "/dashboard";
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -21,7 +26,7 @@ export default function LoginPage() {
 
     if (data.success) {
       localStorage.setItem("token", data.token);
-      window.location.href = "/";
+      window.location.href = redirectTo;
     }
   };
 
