@@ -6,7 +6,6 @@ console.log("🟩 DASHBOARD PAGE LOADED");
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import NewsLayout from "@/components/layout/NewsLayout";
-import { fetchNews } from "@/lib/fetchNews";
 
 export default function Dashboard() {
   const router = useRouter();
@@ -46,13 +45,14 @@ export default function Dashboard() {
 
   // ✅ Fetch news articles
   useEffect(() => {
-    const getNews = async (query:string) => {
-      const data = await fetchNews(query);
-      console.log("Fetched articles:", data);
-      setLoading(false);
-      setArticles(data);
+    const getNews = async () => {
+      const res = await fetch("/api/news");
+      const data = await res.json();
+      setArticles(data.articles);
+     
+      
     };
-    getNews("lagos");
+    getNews();
   }, []);
 
   if (loading) return <p className="text-center mt-10">Loading...</p>;
@@ -60,13 +60,12 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-start py-10 bg-gray-100">
-      <div className="bg-white p-8 rounded-xl shadow-md w-full max-w-4xl text-center space-y-3">
-        <h1 className="text-2xl font-bold">Welcome, {user?.name} 🎉</h1>
-        <p className="text-gray-600 mb-6">{user?.email}</p>
-
-        {/* 📰 News Feed Section */}
-        <NewsLayout articles={articles} />
-      </div>
+      <h1 className="text-3xl font-bold mb-4">Welcome, {user?.name.split(" ")[0].charAt(0).toUpperCase()}{user?.name.split(" ")[0].slice(1)}{' '}{user?.name.split(" ")[1].charAt(0).toUpperCase()}{user?.name.split(" ")[1].slice(1)}!</h1>
+      <p className="mb-6 text-gray-700">Here are the latest news articles for you,{" "}
+        <span className="text-blue-700 font-bold">{user?.name.split(" ")[0].charAt(0).toUpperCase()}{user?.name.split(" ")[0].slice(1)}</span>:
+      </p>
+      {/* 📰 News Feed Section */}
+      <NewsLayout articles={articles} />
     </div>
   );
 }

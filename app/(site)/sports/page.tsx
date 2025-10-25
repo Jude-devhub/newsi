@@ -1,7 +1,7 @@
 import { fetchNews } from "@/lib/fetchNews";
 import NewsLayout from "@/components/layout/NewsLayout";
 
-export default async function DashboardPage() {
+export default async function SportsPage() {
   const [englishEPL, spanishLaLiga, frenchLigue1, germanBundesliga, 
     italianSerieA, europaLeague, fifaWorldCup, nigerianLeague] = await Promise.all([
     fetchNews("epl"),
