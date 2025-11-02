@@ -1,36 +1,34 @@
 import { NextResponse } from "next/server";
-import jwt from "jsonwebtoken";
+import { getServerSession } from "next-auth";
+import type { NextAuthOptions, Session } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
-const JWT_SECRET = process.env.JWT_SECRET || "fallback_secret_key";
+// ✅ Define a type for the API response
+interface ApiResponse {
+  success: boolean;
+  user?: Session["user"];
+  message?: string;
+}
 
-export async function GET(req: Request) {
-  try {
-    const cookieHeader = req.headers.get("cookie") || "";
-    const token = cookieHeader
-      .split("; ")
-      .find((row) => row.startsWith("token="))
-      ?.split("=")[1];
+export async function GET(): Promise<NextResponse<ApiResponse>> {
+  const session = await getServerSession(authOptions as NextAuthOptions);
 
-    if (!token) {
-      return NextResponse.json({ success: false, error: "No token found" }, { status: 401 });
-    }
-
-    const decoded = jwt.verify(token, JWT_SECRET) as {
-      id: string;
-      name: string;
-      email: string;
-    };
-
-    return NextResponse.json({
-      success: true,
-      user: {
-        id: decoded.id,
-        name: decoded.name,
-        email: decoded.email,
-      },
-    });
-  } catch (error) {
-    console.error("Token verification error:", error);
-    return NextResponse.json({ success: false, error: "Invalid token" }, { status: 401 });
+  if (!session) {
+    return NextResponse.json(
+      { success: false, message: "Unauthorized" },
+      { status: 401 }
+    );
   }
+
+  return NextResponse.json(
+    {
+      success: true,
+      user: session.user,
+    },
+    {
+      headers: {
+        "Cache-Control": "no-store, max-age=0",
+      },
+    }
+  );
 }

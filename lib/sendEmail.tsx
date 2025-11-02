@@ -1,8 +1,16 @@
-// lib/mail.ts
 import nodemailer from "nodemailer";
 
+/** ✅ Shared Yahoo SMTP transporter */
+const transporter = nodemailer.createTransport({
+  service: "yahoo",
+  auth: {
+    user: process.env.YAHOO_USER, // your Yahoo email
+    pass: process.env.YAHOO_PASS, // your Yahoo app password
+  },
+});
+
 /**
- * Sends contact form email using Yahoo Mail SMTP
+ * 📬 Send contact form message to admin
  */
 export async function sendContactEmail(
   name: string,
@@ -10,19 +18,9 @@ export async function sendContactEmail(
   message: string
 ) {
   try {
-    // Configure Yahoo SMTP transporter
-    const transporter = nodemailer.createTransport({
-      service: "yahoo",
-      auth: {
-        user: process.env.YAHOO_USER, // e.g. yourname@yahoo.com
-        pass: process.env.YAHOO_PASS, // your Yahoo app password
-      },
-    });
-
-    // Send the mail
     const info = await transporter.sendMail({
       from: `"Your App" <${process.env.YAHOO_USER}>`,
-      to: "judeokechukwuogbonna@gmail.com", // receiver (e.g. your admin inbox)
+      to: "judeokechukwuogbonna@gmail.com",
       subject: `📩 New Contact Form Submission from ${name}`,
       text: `Name: ${name}\nEmail: ${email}\nMessage: ${message}`,
       html: `
@@ -37,16 +35,16 @@ export async function sendContactEmail(
       `,
     });
 
-    console.log("✅ Yahoo email sent:", info.messageId);
+    console.log("✅ Contact email sent:", info.messageId);
     return { success: true };
   } catch (error: any) {
-    console.error("❌ Yahoo email send error:", error);
-    return { success: true, error: error.message };
+    console.error("❌ Contact email error:", error);
+    return { success: false, error: error.message };
   }
 }
 
 /**
- * Sends verification email via Yahoo
+ * ✉️ Send verification email after user registers
  */
 export async function sendVerificationEmail(
   email: string,
@@ -54,14 +52,6 @@ export async function sendVerificationEmail(
   verifyUrl: string
 ) {
   try {
-    const transporter = nodemailer.createTransport({
-      service: "yahoo",
-      auth: {
-        user: process.env.YAHOO_USER,
-        pass: process.env.YAHOO_PASS,
-      },
-    });
-
     const info = await transporter.sendMail({
       from: `"Your App" <${process.env.YAHOO_USER}>`,
       to: email,
@@ -76,7 +66,7 @@ export async function sendVerificationEmail(
               Verify Email
             </a>
           </p>
-          <p>If you didn’t request this, you can ignore this message.</p>
+          <p>If you didn’t request this, you can safely ignore this email.</p>
         </div>
       `,
     });
@@ -85,6 +75,45 @@ export async function sendVerificationEmail(
     return { success: true };
   } catch (error: any) {
     console.error("❌ Verification email error:", error);
-    return { success: true, error: error.message };
+    return { success: false, error: error.message };
+  }
+}
+
+/**
+ * 🔑 Send password reset email when user clicks "Forgot Password"
+ */
+export async function sendPasswordResetEmail(
+  email: string,
+  name: string,
+  resetUrl: string
+) {
+  try {
+    const info = await transporter.sendMail({
+      from: `"Your App" <${process.env.YAHOO_USER}>`,
+      to: email,
+      subject: "Reset your password",
+      html: `
+        <div style="font-family:Arial,sans-serif;line-height:1.6;">
+          <h2>Hello ${name},</h2>
+          <p>We received a request to reset your password.</p>
+          <p>
+            <a href="${resetUrl}"
+               style="display:inline-block;background:#28a745;color:#fff;padding:10px 16px;border-radius:6px;text-decoration:none;">
+              Reset Password
+            </a>
+          </p>
+          <p>This link will expire in <strong>1 hour</strong> for your security.</p>
+          <p>If you didn’t request a password reset, please ignore this email.</p>
+          <hr/>
+          <small>Sent securely via Yahoo SMTP.</small>
+        </div>
+      `,
+    });
+
+    console.log("✅ Password reset email sent:", info.messageId);
+    return { success: true };
+  } catch (error: any) {
+    console.error("❌ Password reset email error:", error);
+    return { success: false, error: error.message };
   }
 }

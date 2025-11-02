@@ -1,118 +1,139 @@
 import { NextResponse } from "next/server";
 
+interface LeagueTeam {
+  rank: number;
+  team: string;
+  logo: string;
+  played: number;
+  won: number;
+  drawn: number;
+  lost: number;
+  points: number;
+}
+
+interface LeagueTable {
+  league: string;
+  country: string;
+  teams: LeagueTeam[];
+}
+
+const API_KEY = process.env.FOOTBALL_DATA_KEY;
+const API_BASE = "https://api.football-data.org/v4/competitions";
+
+const COMPETITIONS = [
+  { code: "PL", name: "Premier League", country: "England" },
+  { code: "PD", name: "La Liga", country: "Spain" },
+  { code: "SA", name: "Serie A", country: "Italy" },
+  { code: "BL1", name: "Bundesliga", country: "Germany" },
+  { code: "FL1", name: "Ligue 1", country: "France" },
+];
+
+// 🧠 In-memory cache
+let cache: {
+  data: LeagueTable[] | null;
+  timestamp: number;
+} = { data: null, timestamp: 0 };
+
+const CACHE_DURATION = 6 * 60 * 60 * 1000; // 6 hours
+
+// 🏆 Fetch standings for all competitions
+async function fetchAllStandings(): Promise<LeagueTable[]> {
+  const results: LeagueTable[] = [];
+
+  await Promise.all(
+    COMPETITIONS.map(async ({ code, name, country }) => {
+      try {
+        const res = await fetch(`${API_BASE}/${code}/standings`, {
+          headers: { "X-Auth-Token": API_KEY },
+          cache: "no-store",
+        });
+
+        if (!res.ok) throw new Error(`${name} failed: ${res.statusText}`);
+        const data = await res.json();
+
+        const table = data.standings?.[0]?.table || [];
+        const teams: LeagueTeam[] = table.map((t: any) => ({
+          rank: t.position,
+          team: t.team.name,
+          logo: t.team.crest,
+          played: t.playedGames,
+          won: t.won,
+          drawn: t.draw,
+          lost: t.lost,
+          points: t.points,
+        }));
+
+        results.push({
+          league: name,
+          country,
+          teams,
+        });
+      } catch (err) {
+        console.error(`⚠️ Error fetching ${name}:`, err);
+      }
+    })
+  );
+
+  return results;
+}
+
 export async function GET() {
-  try {
-    // ⚽ Mock league table data (you can replace with a real API later)
-    const table = [
-      {
-        rank: 1,
-        team: "Manchester City",
-        logo: "https://upload.wikimedia.org/wikipedia/en/e/eb/Manchester_City_FC_badge.svg",
-        played: 10,
-        won: 8,
-        drawn: 1,
-        lost: 1,
-        points: 25,
-      },
-      {
-        rank: 2,
-        team: "Arsenal",
-        logo: "https://upload.wikimedia.org/wikipedia/en/5/53/Arsenal_FC.svg",
-        played: 10,
-        won: 7,
-        drawn: 2,
-        lost: 1,
-        points: 23,
-      },
-      {
-        rank: 3,
-        team: "Liverpool",
-        logo: "https://upload.wikimedia.org/wikipedia/en/0/0c/Liverpool_FC.svg",
-        played: 10,
-        won: 7,
-        drawn: 1,
-        lost: 2,
-        points: 22,
-      },
-      {
-        rank: 4,
-        team: "Tottenham Hotspur",
-        logo: "https://upload.wikimedia.org/wikipedia/en/b/b4/Tottenham_Hotspur.svg",
-        played: 10,
-        won: 6,
-        drawn: 3,
-        lost: 1,
-        points: 21,
-      },
-      {
-        rank: 5,
-        team: "Aston Villa",
-        logo: "https://upload.wikimedia.org/wikipedia/en/9/9f/Aston_Villa_FC_crest_%282016%29.svg",
-        played: 10,
-        won: 6,
-        drawn: 1,
-        lost: 3,
-        points: 19,
-      },
-      {
-        rank: 6,
-        team: "Manchester United",
-        logo: "https://upload.wikimedia.org/wikipedia/en/7/7a/Manchester_United_FC_crest.svg",
-        played: 10,
-        won: 6,
-        drawn: 0,
-        lost: 4,
-        points: 18,
-      },
-      {
-        rank: 7,
-        team: "Newcastle United",
-        logo: "https://upload.wikimedia.org/wikipedia/en/5/56/Newcastle_United_Logo.svg",
-        played: 10,
-        won: 5,
-        drawn: 2,
-        lost: 3,
-        points: 17,
-      },
-      {
-        rank: 8,
-        team: "Brighton",
-        logo: "https://upload.wikimedia.org/wikipedia/en/f/fd/Brighton_%26_Hove_Albion_logo.svg",
-        played: 10,
-        won: 5,
-        drawn: 1,
-        lost: 4,
-        points: 16,
-      },
-      {
-        rank: 9,
-        team: "Chelsea",
-        logo: "https://upload.wikimedia.org/wikipedia/en/c/cc/Chelsea_FC.svg",
-        played: 10,
-        won: 4,
-        drawn: 2,
-        lost: 4,
-        points: 14,
-      },
-      {
-        rank: 10,
-        team: "West Ham United",
-        logo: "https://upload.wikimedia.org/wikipedia/en/c/c2/West_Ham_United_FC_logo.svg",
-        played: 10,
-        won: 4,
-        drawn: 1,
-        lost: 5,
-        points: 13,
-      },
-    ];
+  const now = Date.now();
+
+  // ✅ Serve from cache if still valid
+  if (cache.data && now - cache.timestamp < CACHE_DURATION) {
+    console.log("✅ Serving league tables from cache");
+
+    // 🔄 Trigger background refresh (non-blocking)
+    fetchAllStandings()
+      .then((fresh) => {
+        if (fresh.length > 0) {
+          cache = { data: fresh, timestamp: Date.now() };
+          console.log("🔄 Background cache updated successfully");
+        }
+      })
+      .catch((err) => console.error("⚠️ Background update failed:", err));
 
     return NextResponse.json({
       success: true,
-      table,
-      updated: new Date().toISOString(),
+      leagues: cache.data,
+      cached: true,
+      fetchedAt: new Date(cache.timestamp).toISOString(),
+    });
+  }
+
+  // 🌍 No cache or expired — fetch new data now
+  console.log("🌍 Fetching fresh league tables...");
+  try {
+    const leagues = await fetchAllStandings();
+
+    if (leagues.length > 0) {
+      cache = { data: leagues, timestamp: now };
+    }
+
+    return NextResponse.json({
+      success: true,
+      leagues,
+      cached: false,
+      fetchedAt: new Date(now).toISOString(),
     });
   } catch (error) {
-    console.error("❌ Error fetching league table:", error);
-    return NextResponse.json({ success: false, error: "Failed to load table" }, { status: 500 });
+    console.error("❌ Error fetching standings:", error);
+
+    // 🟡 Use cached version if available
+    if (cache.data) {
+      return NextResponse.json({
+        success: true,
+        leagues: cache.data,
+        cached: true,
+        fallback: true,
+        fetchedAt: new Date(cache.timestamp).toISOString(),
+      });
+    }
+
+    return NextResponse.json(
+      { success: false, error: "Failed to load league tables" },
+      { status: 500 }
+    );
   }
 }

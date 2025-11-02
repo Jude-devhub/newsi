@@ -17,12 +17,20 @@ const fallbackSchedule = [
 
 
 
-export async function GET() {
-  const today = new Date().toISOString().slice(0, 10);
-  console.log({ today });
-  const endpoint = `https://api.football-data.org/v4/matches?dateFrom=${today}&dateTo=${today}`;
 
-  const schedule = await fetchFootballMatches({
+
+export async function GET() {
+  const today = new Date();
+  const from = today.toISOString().slice(0, 10);
+  const to = new Date(today.getTime() + 1 * 24 * 60 * 60 * 1000)
+    .toISOString()
+    .slice(0, 10);
+
+    console.log({ from, to }, today.toISOString().slice(0, 10));
+
+  const endpoint = `https://api.football-data.org/v4/matches?dateFrom=${from}&dateTo=${to}`;
+
+const schedule = await fetchFootballMatches({
     endpoint,
     cacheKey: "schedule",
     cacheTime: 10 * 60 * 1000, // 10 min

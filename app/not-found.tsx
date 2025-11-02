@@ -9,12 +9,11 @@ export default async function NotFound() {
  //const articles = await fetchNews("politics");
   return (
     <>
-      <AlertBox message="Page was not found. Check the URL or check this articles." />
+      <AlertBox message="Sorry, something went wrong!" />
 
-      <h1>404 - Not Found</h1>
-      {/* <NewsLayout articles={articles} /> */}
-      <p>The article you are looking for does not exist.</p>
+      <h1>
       <Link href={'/'}>Return to News</Link>
+      </h1>
       
     </>
   );

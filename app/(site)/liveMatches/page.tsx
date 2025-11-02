@@ -1,6 +1,4 @@
-import LiveMatches from "@/components/layout/liveMatches";
-import UpcomingMatches from "@/components/layout/upcomingMatches";
-import MatchesTabs from "@/components/layout/matchesTabs";
+import MatchesTabs from "@/components/layout/matches/matchesTabs";
 
 export default function MatchesPage() {
   return (
