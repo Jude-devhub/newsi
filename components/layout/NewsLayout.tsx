@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useEffect, useState } from "react";
@@ -9,29 +10,23 @@ interface NewsLayoutProps {
 }
 
 export default function NewsLayout({ articles = [] }: NewsLayoutProps) {
-   const [navbarHeight, setNavbarHeight] = useState(0);
-
-  // ✅ Automatically detect and set navbar height dynamically
-  // useEffect(() => {
-  //   const navbar = document.querySelector("nav");
-  //   if (navbar) setNavbarHeight(navbar.offsetHeight);
-  // }, []);
+ 
 
   if (!articles.length)
     return <p className="text-center mt-10 text-gray-600">No news available</p>;
 
-  // 🧠 Article layout slices
+  // Fixed slices (no skips)
   const feature = articles[0];
   const secondary = articles.slice(1, 3);
-  const sidebar = articles.slice(4, 8);
-  const carouselOne = articles.slice(9, 15);
-  const listGrid = articles.slice(16, 30);
-  const carouselTwo = articles.slice(31);
+  const sidebar = articles.slice(3, 7);
+  const carouselOne = articles.slice(7, 13);
+  const listGrid = articles.slice(13, 27);
+  const carouselTwo = articles.slice(27);
 
   return (
     <main
       className="relative min-h-screen bg-gray-50 pb-16 transition-all duration-300"
-     
+      
     >
       <div className="container mx-auto px-4 md:px-6 lg:px-8 space-y-12">
         {/* 📰 Top News Section */}

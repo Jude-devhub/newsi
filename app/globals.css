@@ -1,3 +1,50 @@
 @import "tailwindcss";
 
 
+/* Images inside article content */
+.prose-img-wrapper img {
+  @apply w-full h-auto rounded-lg transition-transform duration-300 ease-in-out;
+}
+.prose-img-wrapper img:hover {
+  transform: scale(1.05);
+}
+
+/* Links inside article content */
+.prose-img-wrapper a {
+  @apply text-blue-600 dark:text-blue-400 hover:underline transition-colors duration-300;
+}
+
+/* Headings spacing */
+.prose-img-wrapper h1,
+.prose-img-wrapper h2,
+.prose-img-wrapper h3,
+.prose-img-wrapper h4,
+.prose-img-wrapper h5,
+.prose-img-wrapper h6 {
+  @apply mt-6 mb-4 font-bold leading-snug;
+}
+
+/* Paragraph spacing */
+.prose-img-wrapper p {
+  @apply mb-4;
+}
+
+/* Lists */
+.prose-img-wrapper ul,
+.prose-img-wrapper ol {
+  @apply mb-4 ml-5 list-inside;
+}
+
+/* Blockquotes */
+.prose-img-wrapper blockquote {
+  @apply border-l-4 border-gray-300 dark:border-gray-700 pl-4 italic text-gray-600 dark:text-gray-400 my-4;
+}
+
+/* Code blocks */
+.prose-img-wrapper pre {
+  @apply bg-gray-100 dark:bg-gray-800 p-4 rounded-lg overflow-x-auto mb-4;
+}
+.prose-img-wrapper code {
+  @apply bg-gray-200 dark:bg-gray-700 px-1 py-0.5 rounded text-sm;
+}
+

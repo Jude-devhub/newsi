@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Geist, Geist_Mono } from "next/font/google";
-import Adsense from "@/components/ads/googeAds";
 import Script from "next/script";
 import NavigationBar from "@/components/layout/navigationbar";
 import Footer from "@/components/layout/footer";

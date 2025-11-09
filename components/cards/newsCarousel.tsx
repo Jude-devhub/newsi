@@ -52,8 +52,8 @@ export default function NewsCarousel({ index, articles }: { index: number; artic
                 {article.source?.name}
               </h3>
               <a
-                href={article.url}
-                target="_blank"
+                href={`/read/${encodeURIComponent(article.url)}`}
+                
                 rel="noopener noreferrer"
                 className="block text-lg font-semibold hover:text-blue-600 transition"
               >

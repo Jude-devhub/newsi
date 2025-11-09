@@ -372,7 +372,7 @@ export default function WeatherPageAll() {
       {/* page content scrolls above background */}
       <div
         className="relative z-10 min-h-screen"
-        style={{ paddingTop: navbarHeight }}
+        
       >
         <div className="container mx-auto px-4 md:px-6 lg:px-8 py-8">
           {/* header + search */}
