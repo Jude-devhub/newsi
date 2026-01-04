@@ -1,7 +1,4 @@
 
-"use client";
-
-import React, { useEffect, useState } from "react";
 import NewsCardMain, { Article } from "@/components/cards/newsCardMain";
 import NewsCarousel from "@/components/cards/newsCarousel";
 

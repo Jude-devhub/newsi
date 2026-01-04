@@ -26,7 +26,7 @@ try {
   return data?.country_name ?? null;
 } catch (err) {
   console.error("Error fetching country:", err);
-  return null;
+  return 'Nigeria'; // default country on error
 }
 
 }
